@@ -1,17 +1,9 @@
+
 {
-  "name": "klip-replicate-video",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js"
-  },
-  "dependencies": {
-    "dotenv": "^16.4.7",
-    "express": "^5.1.0",
-    "express-rate-limit": "^8.1.0",
-    "helmet": "^8.1.0",
-    "replicate": "^1.0.0"
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ai-video",
+  "compatibility_date": "2026-10-19",
+  "assets": {
+    "directory": "./public"
   }
 }
