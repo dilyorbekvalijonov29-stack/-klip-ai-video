@@ -1,259 +1,73 @@
+
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Клип — AI видео яратиш</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Klip AI Video</title>
 <style>
-:root{--bg:#f3efe8;--surface:#fffdf9;--ink:#1d1b2e;--muted:#6b6880;--line:#ddd6c8;--accent:#3b2fd9;--accent-ink:#fff;--hot:#ff5a3c;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14131f;--surface:#1e1c2e;--ink:#f2efff;--muted:#9a97b3;--line:#34314d;--accent:#8e84ff;--accent-ink:#14131f;--hot:#ff7a5f}}
-:root[data-theme="dark"]{--bg:#14131f;--surface:#1e1c2e;--ink:#f2efff;--muted:#9a97b3;--line:#34314d;--accent:#8e84ff;--accent-ink:#14131f;--hot:#ff7a5f}
-*,*::before,*::after{box-sizing:inherit}
-[hidden]{display:none!important}
-html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45;-webkit-tap-highlight-color:transparent}
-.app{max-width:480px;margin:0 auto;padding:16px 16px 96px}
-header{display:flex;align-items:center;justify-content:space-between;padding:8px 0 18px}
-.logo{font-weight:800;font-size:22px;letter-spacing:-.5px}
-.logo i{display:inline-block;width:14px;height:14px;background:var(--hot);border-radius:50% 50% 50% 0;margin-right:7px;transform:rotate(-45deg)}
-.credits{font-size:13px;color:var(--muted);border:1px solid var(--line);padding:6px 12px;border-radius:99px;background:var(--surface)}
-h1{font-size:30px;line-height:1.1;letter-spacing:-1px;margin:0 0 6px;font-weight:800}
-.sub{color:var(--muted);margin:0 0 18px;font-size:15px}
-label.h{display:block;font-size:14px;font-weight:700;margin:18px 0 8px}
-textarea{width:100%;min-height:110px;resize:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:16px;padding:14px;font:inherit;font-size:16px}
-textarea:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{flex:none;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:99px;padding:10px 16px;font:inherit;font-size:14px;font-weight:600;cursor:pointer;min-height:44px}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.ratios{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.ratio{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:12px 6px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
-.ratio span{display:block;border:2px solid currentColor;border-radius:4px}
-.ratio[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent)}
-.bar{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:linear-gradient(transparent,var(--bg) 30%)}
-.go{display:block;width:100%;max-width:448px;margin:0 auto;border:0;background:var(--accent);color:var(--accent-ink);font:inherit;font-size:17px;font-weight:800;padding:17px;border-radius:18px;cursor:pointer;min-height:56px}
-.go:disabled{opacity:.5}
-.err{color:var(--hot);font-size:14px;margin-top:8px;min-height:1em}
-.stage{display:none;text-align:center;padding:40px 0}
-.stage.on{display:block}
-.prog{height:10px;background:var(--line);border-radius:9px;overflow:hidden;margin:20px 0 10px}
-.prog b{display:block;height:100%;width:0;background:var(--hot);transition:width .4s}
-.screen{margin:0 auto;border-radius:20px;background:linear-gradient(160deg,var(--accent),var(--hot));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;padding:20px;text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.18)}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-.btn2{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-weight:700;padding:14px;border-radius:14px;cursor:pointer;min-height:48px}
-.note{font-size:12.5px;color:var(--muted);margin-top:14px}
-.hist{margin-top:26px}
-.hist h2{font-size:16px;margin:0 0 10px}
-.hi{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);background:var(--surface);border-radius:14px;margin-bottom:8px;font-size:14px}
-.hi .th{flex:none;width:44px;height:44px;border-radius:10px;background:linear-gradient(160deg,var(--accent),var(--hot))}
-.hi small{color:var(--muted);display:block}
-.hide{display:none}
-@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+*{box-sizing:border-box}
+body{margin:0;background:#10131c;color:white;font-family:Arial,sans-serif}
+.app{max-width:500px;margin:auto;padding:22px}
+h1{text-align:center;font-size:32px}
+h1 span{color:#8b7cff}
+p{text-align:center;color:#b8bfd0}
+.card{background:#1c2130;border:1px solid #343b50;border-radius:18px;padding:18px;margin-top:20px}
+label{display:block;margin:15px 0 8px}
+textarea,select,input{width:100%;padding:13px;border-radius:10px;border:1px solid #454d63;background:#111622;color:white;font-size:16px}
+textarea{height:110px;resize:vertical}
+button{width:100%;padding:15px;margin-top:15px;border:0;border-radius:12px;background:#7866ff;color:white;font-size:17px;font-weight:bold}
+button:active{opacity:.8}
+#preview{width:100%;margin-top:15px;border-radius:12px;display:none}
+#status{white-space:pre-wrap;line-height:1.5;color:#c6cce0}
+.small{font-size:13px;color:#939bb0}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div class="logo"><i></i>Клип</div><div class="credits" id="cr">⚡ 5 та демо уриниш</div></header>
+<h1>🎬 Klip <span>AI Video</span></h1>
+<p>G‘oyangizni video loyihasiga aylantiring</p>
 
-<section id="form">
-<h1>Матндан видео яратинг</h1>
-<p class="sub">Нима кўрмоқчи эканингизни ёзинг — қолганини биз қиламиз.</p>
-<label class="h" for="p">Видео ғояси</label>
-<textarea id="p" placeholder="Масалан: Самарқанд Регистони тонгда, дрон кўриниши"></textarea>
-<div class="chips" id="ex">
-<button class="chip">Тоғ ва булутлар</button><button class="chip">Тошкент кечаси</button><button class="chip">Маҳсулот реклама</button><button class="chip">Қўғирчоқ мультфильм</button>
+<div class="card">
+<label>Video g‘oyasi</label>
+<textarea id="prompt" placeholder="Masalan: Sher o‘rmonda yugurmoqda..."></textarea>
+
+<label>Video davomiyligi</label>
+<select id="duration">
+<option value="5">5 soniya</option>
+<option value="10">10 soniya</option>
+<option value="30">30 soniya</option>
+<option value="60">60 soniya</option>
+</select>
+
+<label>Rasm yuklash (ixtiyoriy)</label>
+<input id="image" type="file" accept="image/*">
+<img id="preview" alt="Yuklangan rasm">
+
+<button id="generate">🎥 Video yaratish</button>
+<div id="status">Video yaratish xizmati hali ulanmagan.</div>
+<p class="small">AI video modeli serverga ulangandan keyin haqiqiy video yaratiladi.</p>
 </div>
-
-<label class="h">Услуб</label>
-<div class="chips" id="st">
-<button class="chip" aria-pressed="true">Кино</button><button class="chip" aria-pressed="false">Мультфильм</button><button class="chip" aria-pressed="false">Реалистик</button><button class="chip" aria-pressed="false">Анимэ</button>
 </div>
-
-<label class="h">Ўлчам</label>
-<div class="ratios" id="ra">
-<button class="ratio" aria-pressed="true"><span style="width:16px;height:28px"></span>9:16 Reels</button>
-<button class="ratio" aria-pressed="false"><span style="width:26px;height:26px"></span>1:1 Пост</button>
-<button class="ratio" aria-pressed="false"><span style="width:30px;height:17px"></span>16:9 YouTube</button>
-</div>
-
-<label class="h">Давомийлиги</label>
-<div class="chips" id="du">
-<button class="chip" aria-pressed="true">5 сония</button><button class="chip" aria-pressed="false">10 сония</button><button class="chip" aria-pressed="false">15 сония</button>
-</div>
-<div class="err" id="err" role="alert"></div>
-</section>
-
-<section class="stage" id="wait" aria-live="polite">
-<div class="screen" style="width:120px;height:200px">…</div>
-<div class="prog"><b id="pb"></b></div>
-<div id="pt">Ғоя таҳлил қилинмоқда…</div>
-</section>
-
-<section class="stage" id="done">
-<video class="screen" id="res" style="width:200px;height:355px" controls playsinline hidden></video>
-<div class="actions"><button class="btn2" id="dl">Юклаб олиш</button><button class="btn2" id="nw">Янги видео</button></div>
-<p class="note" id="result-note">Видео сервер орқали Replicate AI хизматида яратилади.</p>
-</section>
-
-<section class="hist hide" id="hs"><h2>Менинг видеоларим</h2><div id="hl"></div></section>
-</div>
-
-<div class="bar"><button class="go" id="go">Видео яратиш</button></div>
-
 <script>
-var $ = function(id){ return document.getElementById(id); };
-function group(id){
-  var g = $(id);
-  g.addEventListener('click', function(e){
-    var b = e.target.closest('button');
-    if(!b || !g.contains(b)) return;
-    Array.prototype.forEach.call(g.querySelectorAll('button'), function(c){
-      c.setAttribute('aria-pressed', c === b ? 'true' : 'false');
-    });
-  });
-}
-group('st'); group('ra'); group('du');
-
-$('ex').addEventListener('click', function(e){
-  var b = e.target.closest('button');
-  if(b){ $('p').value = b.textContent; $('p').focus(); }
+const imageInput=document.getElementById('image');
+const preview=document.getElementById('preview');
+imageInput.addEventListener('change',function(){
+  const file=this.files[0];
+  if(file){
+    preview.src=URL.createObjectURL(file);
+    preview.style.display='block';
+  }
 });
-
-function val(id){
-  var b = $(id).querySelector('[aria-pressed="true"]');
-  return b ? b.textContent : '';
-}
-var left = 5, items = [], pollTimer = null, activePrediction = null;
-
-function show(which){
-  ['form','wait','done'].forEach(function(id){
-    var el = $(id);
-    if(id === 'form') el.style.display = which === 'form' ? 'block' : 'none';
-    else el.classList.toggle('on', id === which);
-  });
-  $('go').style.display = which === 'form' ? 'block' : 'none';
-  $('hs').classList.toggle('hide', !(which === 'form' && items.length));
-}
-function setProgress(percent, message){
-  $('pb').style.width = Math.max(0, Math.min(100, percent)) + '%';
-  if(message) $('pt').textContent = message;
-}
-function stopPolling(){
-  if(pollTimer){ clearTimeout(pollTimer); pollTimer = null; }
-}
-function showError(message){
-  stopPolling();
-  activePrediction = null;
-  show('form');
-  $('err').textContent = message || 'Хатолик юз берди. Қайта уриниб кўринг.';
-}
-function extractVideoUrl(output){
-  if(typeof output === 'string') return output;
-  if(Array.isArray(output)){
-    for(var i=0;i<output.length;i++){
-      var found = extractVideoUrl(output[i]);
-      if(found) return found;
-    }
+document.getElementById('generate').addEventListener('click',function(){
+  const prompt=document.getElementById('prompt').value.trim();
+  if(prompt.length<5){
+    document.getElementById('status').textContent='Avval video g‘oyasini yozing.';
+    return;
   }
-  if(output && typeof output === 'object'){
-    if(typeof output.url === 'string') return output.url;
-    if(typeof output.href === 'string') return output.href;
-  }
-  return '';
-}
-function checkPrediction(id, prompt, startedAt){
-  fetch('/api/videos/' + encodeURIComponent(id))
-    .then(function(r){ return r.json().then(function(data){
-      if(!r.ok) throw new Error(data.error || 'Ҳолатни текшириб бўлмади.');
-      return data;
-    });})
-    .then(function(data){
-      var elapsed = Date.now() - startedAt;
-      var pct = Math.min(92, 20 + elapsed / 1200);
-      if(data.status === 'succeeded'){
-        stopPolling();
-        activePrediction = null;
-        var url = extractVideoUrl(data.output);
-        if(!url) throw new Error('AI хизмати тайёр натижа қайтармади.');
-        var video = $('res');
-        video.hidden = false;
-        video.src = url;
-        video.load();
-        var selectedRatio = val('ra');
-        var dims = selectedRatio.indexOf('16:9') === 0 ? [300,169] :
-                   selectedRatio.indexOf('1:1') === 0 ? [240,240] : [200,355];
-        video.style.width = dims[0] + 'px';
-        video.style.height = dims[1] + 'px';
-        left = Math.max(0, left - 1);
-        $('cr').textContent = '⚡ ' + left + ' та бепул (демо ҳисоблагич)';
-        $('result-note').textContent = 'Видео тайёр. Replicate натижа URL манзили вақтинчалик бўлиши мумкин; керак бўлса, уни ўз омборингизга сақланг.';
-        items.unshift({p:prompt, m:val('st')+' · '+selectedRatio.split(' ')[0]+' · '+val('du')});
-        $('hl').innerHTML = '';
-        items.forEach(function(x){
-          var d = document.createElement('div'); d.className = 'hi';
-          var thumb = document.createElement('div'); thumb.className = 'th';
-          var content = document.createElement('div');
-          var title = document.createElement('b'); title.textContent = x.p;
-          var meta = document.createElement('small'); meta.textContent = x.m;
-          content.appendChild(title); content.appendChild(meta);
-          d.appendChild(thumb); d.appendChild(content); $('hl').appendChild(d);
-        });
-        show('done');
-        setProgress(100, 'Видео тайёр!');
-      } else if(data.status === 'failed' || data.status === 'canceled'){
-        throw new Error(data.error || 'Видео яратиш амалга ошмади.');
-      } else {
-        setProgress(pct, 'AI видео яратилмоқда…');
-        pollTimer = setTimeout(function(){ checkPrediction(id, prompt, startedAt); }, 2500);
-      }
-    })
-    .catch(function(err){ showError(err.message); });
-}
-$('go').onclick = function(){
-  stopPolling();
-  var prompt = $('p').value.trim();
-  if(prompt.length < 5){ $('err').textContent = 'Камида бир неча сўз ёзинг.'; $('p').focus(); return; }
-  if(left < 1){ $('err').textContent = 'Демо ҳисоблагичдаги уринишлар тугади. Саҳифани қайта очинг.'; return; }
-  $('err').textContent = '';
-  var ratioText = val('ra');
-  var aspectRatio = ratioText.indexOf('16:9') === 0 ? '16:9' :
-                    ratioText.indexOf('1:1') === 0 ? '1:1' : '9:16';
-  var durationMatch = val('du').match(/\d+/);
-  var duration = durationMatch ? Number(durationMatch[0]) : 5;
-  var style = val('st');
-  var fullPrompt = prompt + '. Visual style: ' + style + '.';
-  show('wait');
-  setProgress(5, 'Replicate хизматига сўров юборилмоқда…');
-  $('res').hidden = true;
-  $('res').removeAttribute('src');
-  fetch('/api/videos', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt:fullPrompt, duration:duration, aspectRatio:aspectRatio})
-  }).then(function(r){ return r.json().then(function(data){
-    if(!r.ok) throw new Error(data.error || 'Сўров юборилмади.');
-    return data;
-  });}).then(function(data){
-    activePrediction = data.id;
-    setProgress(15, 'AI видео яратилмоқда…');
-    checkPrediction(data.id, fullPrompt, Date.now());
-  }).catch(function(err){ showError(err.message); });
-};
-$('nw').onclick = function(){
-  stopPolling(); activePrediction = null;
-  $('p').value = ''; $('err').textContent = '';
-  $('pb').style.width = '0'; $('pt').textContent = 'Ғоя таҳлил қилинмоқда…';
-  $('res').pause(); $('res').removeAttribute('src'); $('res').hidden = true;
-  show('form'); window.scrollTo(0,0);
-};
-$('dl').onclick = function(){
-  var url = $('res').src;
-  if(!url){ alert('Аввал видео яратинг.'); return; }
-  var a = document.createElement('a'); a.href = url; a.target = '_blank';
-  a.rel = 'noopener'; a.download = 'klip-video.mp4'; a.click();
-};
-show('form');
+  document.getElementById('status').textContent=
+    'Loyiha tayyorlandi.\nVideo yaratish uchun AI serveri ulanmagan. Server ulangandan keyin bu tugma haqiqiy video yaratadi.';
+});
 </script>
 </body>
 </html>
