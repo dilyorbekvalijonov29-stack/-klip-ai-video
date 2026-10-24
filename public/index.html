@@ -7,62 +7,26 @@
   <title>AI Video Maker</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      padding: 20px;
-      background: #101322;
-      color: white;
-      font-family: Arial, sans-serif;
-    }
-    main {
-      max-width: 600px;
-      margin: 35px auto;
-      padding: 24px;
-      background: #202640;
-      border-radius: 18px;
-    }
-    h1 { color: #a99aff; }
-    textarea, select, button {
-      width: 100%;
-      padding: 14px;
-      margin-top: 14px;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    textarea, select {
-      background: #101322;
-      color: white;
-      border: 1px solid #555b78;
-    }
-    button {
-      border: 0;
-      background: #7965ff;
-      color: white;
-      font-weight: bold;
-    }
-    button:disabled { opacity: .6; }
-    #status { margin-top: 18px; overflow-wrap: anywhere; }
-    video { width: 100%; margin-top: 16px; }
+    body { margin:0; padding:20px; background:#101322; color:white; font-family:Arial,sans-serif; }
+    main { max-width:600px; margin:35px auto; padding:24px; background:#202640; border-radius:18px; }
+    h1 { color:#a99aff; }
+    textarea,select,button { width:100%; padding:14px; margin-top:14px; border-radius:10px; font-size:16px; }
+    textarea,select { background:#101322; color:white; border:1px solid #555b78; }
+    button { border:0; background:#7965ff; color:white; font-weight:bold; }
+    button:disabled { opacity:.6; }
+    #status { margin-top:18px; overflow-wrap:anywhere; }
+    video { width:100%; margin-top:16px; }
   </style>
 </head>
 <body>
 <main>
   <h1>🎬 AI Video Maker</h1>
   <p>O‘z g‘oyangizdan AI video yarating</p>
-
-  <textarea id="prompt" rows="4"
-    placeholder="Masalan: A lion running through a jungle..."></textarea>
-
-  <select id="duration">
-    <option value="5">5 soniya</option>
-    <option value="10">10 soniya</option>
-  </select>
-
+  <textarea id="prompt" rows="4" placeholder="A lion running through a jungle..."></textarea>
   <button id="generate">🎥 Video yaratish</button>
   <p id="status"></p>
   <div id="result"></div>
 </main>
-
 <script>
 const button = document.getElementById("generate");
 const statusText = document.getElementById("status");
@@ -70,51 +34,38 @@ const resultBox = document.getElementById("result");
 
 button.addEventListener("click", async () => {
   const prompt = document.getElementById("prompt").value.trim();
-
   if (!prompt) {
     statusText.textContent = "Avval video g‘oyasini yozing.";
     return;
   }
 
   button.disabled = true;
-  statusText.textContent = "Video yaratish boshlanmoqda...";
   resultBox.replaceChildren();
+  statusText.textContent = "Video yaratish бошланмоқда...";
 
   try {
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        prompt: prompt,
-        duration: Number(document.getElementById("duration").value)
-      })
+      body: JSON.stringify({ prompt })
     });
-
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "Server xatosi");
-    }
+    if (!response.ok) throw new Error(data.error || "Server xatosi");
     if (!data.id) throw new Error("Vazifa ID si topilmadi.");
 
     for (let i = 0; i < 120; i++) {
       statusText.textContent = "Video yaratilmoqda... " + (i + 1);
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-      const check = await fetch(
-        "/api/status/" + encodeURIComponent(data.id)
-      );
+      const check = await fetch("/api/status/" + encodeURIComponent(data.id));
       const result = await check.json();
-
-      if (!check.ok) {
-        throw new Error(result.error || "Holatni tekshirish xatosi");
-      }
+      if (!check.ok) throw new Error(result.error || "Holatni tekshirish xatosi");
 
       if (result.status === "succeeded") {
-        const videoUrl = result.video || result.output;
-        const url = Array.isArray(videoUrl) ? videoUrl[0] : videoUrl;
-
-        if (!url) throw new Error("Tayyor video havolasi topilmadi.");
-
+        const url = Array.isArray(result.output) ? result.output[0] : result.output;
+        if (typeof url !== "string" || !url.startsWith("http")) {
+          throw new Error("Tayyor video havolasi topilmadi.");
+        }
         const video = document.createElement("video");
         video.controls = true;
         video.src = url;
@@ -127,8 +78,7 @@ button.addEventListener("click", async () => {
         throw new Error(result.error || "Video yaratish amalga oshmadi.");
       }
     }
-
-    statusText.textContent = "Video hali tayyor emas. Keyinroq tekshiring.";
+    statusText.textContent = "Video hali tayyor emas. Keyinroq tekширинг.";
   } catch (error) {
     statusText.textContent = "Xato: " + error.message;
   } finally {
@@ -138,4 +88,3 @@ button.addEventListener("click", async () => {
 </script>
 </body>
 </html>
-
