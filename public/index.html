@@ -7,80 +7,170 @@
   <title>AI Video Maker</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin:0; padding:20px; background:#101322; color:white; font-family:Arial,sans-serif; }
-    main { max-width:600px; margin:35px auto; padding:24px; background:#202640; border-radius:18px; }
-    h1 { color:#a99aff; }
-    textarea,select,button { width:100%; padding:14px; margin-top:14px; border-radius:10px; font-size:16px; }
-    textarea,select { background:#101322; color:white; border:1px solid #555b78; }
-    button { border:0; background:#7965ff; color:white; font-weight:bold; }
-    button:disabled { opacity:.6; }
-    #status { margin-top:18px; overflow-wrap:anywhere; }
-    video { width:100%; margin-top:16px; }
+    body {
+      margin: 0; padding: 18px;
+      background: #101322; color: #fff;
+      font-family: Arial, sans-serif;
+    }
+    main {
+      max-width: 600px; margin: 20px auto;
+      padding: 22px; background: #202640;
+      border-radius: 18px;
+    }
+    h1 { color: #a99aff; font-size: 28px; }
+    p { line-height: 1.5; }
+    label { display:block; margin-top:18px; font-weight:bold; }
+    textarea, select, input, button {
+      width: 100%; padding: 14px; margin-top: 9px;
+      border-radius: 10px; font-size: 16px;
+    }
+    textarea, select, input {
+      background: #101322; color: white;
+      border: 1px solid #555b78;
+    }
+    input[type="file"] { padding: 10px; }
+    button {
+      border: 0; background: #7965ff;
+      color: white; font-weight: bold; cursor: pointer;
+    }
+    button:disabled { opacity: .6; }
+    #status { overflow-wrap:anywhere; }
+    video, #preview { width:100%; margin-top:16px; border-radius:10px; }
+    .hint { color:#c7c9dc; font-size:13px; }
+    a { color:#c3baff; }
   </style>
 </head>
 <body>
 <main>
   <h1>🎬 AI Video Maker</h1>
-  <p>O‘z g‘oyangizdan AI video yarating</p>
-  <textarea id="prompt" rows="4" placeholder="A lion running through a jungle..."></textarea>
-  <button id="generate">🎥 Video yaratish</button>
-  <p id="status"></p>
+  <p>Матн ёки расмдан AI видео яратинг.</p>
+
+  <label for="prompt">Видео ғояси</label>
+  <textarea id="prompt" rows="4" maxlength="1000"
+    placeholder="Масалан: A lion walking through the African savanna at sunset..."></textarea>
+
+  <label for="image">Расм юклаш (ихтиёрий)</label>
+  <input id="image" type="file" accept="image/png,image/jpeg,image/webp">
+  <p class="hint">PNG, JPG ёки WebP расм танланг.</p>
+  <img id="preview" hidden alt="Юкланган расм">
+
+  <label for="duration">Видео давомийлиги</label>
+  <select id="duration">
+    <option value="5">5 сония</option>
+    <option value="10">10 сония</option>
+  </select>
+
+  <button id="generate">🎥 Видео яратиш</button>
+  <p id="status" role="status"></p>
   <div id="result"></div>
 </main>
+
 <script>
 const button = document.getElementById("generate");
+const promptInput = document.getElementById("prompt");
+const imageInput = document.getElementById("image");
+const preview = document.getElementById("preview");
 const statusText = document.getElementById("status");
 const resultBox = document.getElementById("result");
 
+imageInput.addEventListener("change", () => {
+  const file = imageInput.files[0];
+  preview.hidden = !file;
+  if (file) preview.src = URL.createObjectURL(file);
+});
+
 button.addEventListener("click", async () => {
-  const prompt = document.getElementById("prompt").value.trim();
+  const prompt = promptInput.value.trim();
+  const image = imageInput.files[0];
+  const duration = Number(document.getElementById("duration").value);
+
   if (!prompt) {
-    statusText.textContent = "Avval video g‘oyasini yozing.";
+    statusText.textContent = "Аввал видео ғоясини ёзинг.";
+    return;
+  }
+  if (prompt.length < 5) {
+    statusText.textContent = "Ғоя камида 5 та белгидан иборат бўлсин.";
+    return;
+  }
+  if (image && image.size > 5 * 1024 * 1024) {
+    statusText.textContent = "Расм 5 MB дан кичик бўлиши керак.";
     return;
   }
 
   button.disabled = true;
   resultBox.replaceChildren();
-  statusText.textContent = "Video yaratish бошланмоқда...";
+  statusText.textContent = "Серверга сўров юборилмоқда...";
 
   try {
+    // Бу сўров матн ва давомийликни серверга юборади.
+    // Расмдан видео учун сервер ҳам image маълумотини қабул қилиши шарт.
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({
+        prompt,
+        duration,
+        image: null
+      })
     });
+
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error || "Server xatosi");
-    if (!data.id) throw new Error("Vazifa ID si topilmadi.");
+    if (!response.ok) {
+      throw new Error(data.error || "Видео яратишда сервер хатоси.");
+    }
+    if (!data.id) throw new Error("Сервер вазифа ID рақамини қайтармади.");
 
     for (let i = 0; i < 120; i++) {
-      statusText.textContent = "Video yaratilmoqda... " + (i + 1);
+      statusText.textContent =
+        "Видео тайёрланмоқда... " + Math.round((i + 1) * 5 / 60) + " дақиқагача кутилади.";
+
       await new Promise(resolve => setTimeout(resolve, 5000));
 
-      const check = await fetch("/api/status/" + encodeURIComponent(data.id));
+      const check = await fetch(
+        "/api/status/" + encodeURIComponent(data.id)
+      );
       const result = await check.json();
-      if (!check.ok) throw new Error(result.error || "Holatni tekshirish xatosi");
+
+      if (!check.ok) {
+        throw new Error(result.error || "Видео ҳолатини олиб бўлмади.");
+      }
 
       if (result.status === "succeeded") {
-        const url = Array.isArray(result.output) ? result.output[0] : result.output;
-        if (typeof url !== "string" || !url.startsWith("http")) {
-          throw new Error("Tayyor video havolasi topilmadi.");
+        let url = result.output;
+        if (Array.isArray(url)) url = url[0];
+        if (url && typeof url === "object") url = url.url;
+
+        if (typeof url !== "string" || !url.startsWith("https://")) {
+          throw new Error("Тайёр видео ҳаволаси топилмади.");
         }
+
         const video = document.createElement("video");
         video.controls = true;
+        video.playsInline = true;
         video.src = url;
         resultBox.appendChild(video);
-        statusText.textContent = "Video tayyor!";
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "Тайёр видеони очиш ёки юклаб олиш";
+        link.style.display = "block";
+        link.style.marginTop = "14px";
+        resultBox.appendChild(link);
+
+        statusText.textContent = "Видео тайёр!";
         return;
       }
 
       if (result.status === "failed" || result.status === "canceled") {
-        throw new Error(result.error || "Video yaratish amalga oshmadi.");
+        throw new Error(result.error || "AI модель видео ярата олмади.");
       }
     }
-    statusText.textContent = "Video hali tayyor emas. Keyinroq tekширинг.";
+
+    statusText.textContent = "Видео ҳали тайёр эмас. Кейинроқ текширинг.";
   } catch (error) {
-    statusText.textContent = "Xato: " + error.message;
+    statusText.textContent = "Хато: " + error.message;
   } finally {
     button.disabled = false;
   }
